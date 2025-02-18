@@ -1,34 +1,20 @@
-from aiogram import Dispatcher, Bot, executor, types
-from decouple import config
-
+from aiogram import types, executor
 import logging
 
+from config import Admins, bot, dp
+from handlers import register_all_handlers
 
-token = config('TELEGRAM_BOT_TOKEN')
 
-bot = Bot(token=token)
-dp = Dispatcher(bot)
+async def on_startup(_):
+  for admin in Admins:
+    await bot.send_message(chat_id=admin, text='Бот включен')
 
-@dp.message_handler(commands=['start'])
-async def start_handler(message: types.Message):
-  await message.answer('Hello world!')
+async def on_shutdown(_):
+  for admin in Admins:
+    await bot.send_message(chat_id=admin, text='Бот выключен')
 
-@dp.message_handler(commands=['image'])
-async def image_handler(message: types.Message):
-  photo = open('media/image.jpeg', 'rb')
-  await bot.send_photo(chat_id=message.from_id.id,
-                       photo=photo)
-
-@dp.message_handler()
-async def echo_handler(message: types.Message):
-  try:
-    num = float(message.text)
-    await message.answer(int(num**2))
-    return
-  except: pass
-
-  await message.answer(message.text)
+register_all_handlers(dp)
 
 if __name__ == '__main__':
   logging.basicConfig(level=logging.INFO)
-  executor.start_polling(dp, skip_updates=True)
+  executor.start_polling(dp, skip_updates=True, on_startup=on_startup, on_shutdown=on_shutdown)
