@@ -1,9 +1,12 @@
 from aiogram import Bot, Dispatcher
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from decouple import config
+
 
 token = config('TELEGRAM_BOT_TOKEN')
 
-Admins = (1038789342, )
-
 bot = Bot(token=token)
-dp = Dispatcher(bot)
+storage = MemoryStorage()
+dp = Dispatcher(bot, storage=storage)
+
+Admins = (1038789342, )
