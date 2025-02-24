@@ -47,20 +47,19 @@ async def load_photo(message: types.Message, state: FSMContext):
     data['photo'] = message.photo[-1].file_id
   
   result_text = (
-    f"Данные о товаре:"
-    f"Название: {data['name']}"
-    f"Цена: {data['price']}"
-    f"Категория: {data['category']}"
+    f"Данные о товаре:\n"
+    f"Название: {data['name']}\n"
+    f"Цена: {data['price']}\n"
+    f"Категория: {data['category']}\n"
     f"Дата создания: {data['created_at']}"
-    f"Фотография: {data['photo']}"
   )
   
-  await message.answer('Сохранить данные?')
   keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
   buttons = ( KeyboardButton(confirm_text), KeyboardButton(cancel_text) )
   keyboard.add(*buttons)
 
   await message.answer_photo(photo=data['photo'], caption=result_text, reply_markup=keyboard)
+  await message.answer('Сохранить данные?')
 
   await ShopStates.next()
 
